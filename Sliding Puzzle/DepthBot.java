@@ -16,7 +16,7 @@ class DepthBot extends SlidingPlayer {
     }
 
     public ArrayList<SlidingMove> findPath(SlidingBoard board) {
-      HashSet<String> seen = new HashSet<String>(); 
+      HashSet<String> seen = new HashSet<String>();
       LinkedList<StackNode> stack = new LinkedList<StackNode>();
       StackNode currNode = new StackNode(board, new ArrayList<SlidingMove>());
 
@@ -29,12 +29,10 @@ class DepthBot extends SlidingPlayer {
           if (!seen.contains(childBoard.toString())) {
             seen.add(childBoard.toString());
             ArrayList<SlidingMove> childPath = (ArrayList<SlidingMove>)currNode.path.clone();
+            //System.out.println(childPath);
             childPath.add(move);
             stack.add(new StackNode(childBoard, childPath));
           }
-          // else {
-          //   System.out.println("Already seen!");
-          // }
         }
         currNode = stack.pop();
       }
@@ -43,10 +41,6 @@ class DepthBot extends SlidingPlayer {
 
     // Perform a single move based on the current given board state
     public SlidingMove makeMove(SlidingBoard board) {
-      if(!board.isSolved())
-      {
-        this.findPath(board);
-      }
       move_number++;
       return path.get(move_number);
     }

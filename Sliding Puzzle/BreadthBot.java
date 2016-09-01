@@ -41,10 +41,6 @@ class BreadthBot extends SlidingPlayer {
 
     // Perform a single move based on the current given board state
     public SlidingMove makeMove(SlidingBoard board) {
-          if(!board.isSolved())
-          {
-            this.findPath(board);
-          }
           move_number++;
           return sol_set.get(move_number);
     }

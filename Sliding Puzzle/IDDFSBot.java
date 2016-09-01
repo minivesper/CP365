@@ -26,21 +26,22 @@ class IDDFSBot extends SlidingPlayer {
           SlidingBoard childBoard = new SlidingBoard(currNode.board.size);
           childBoard.setBoard(currNode.board);
           childBoard.doMove(move);
-          if (!seen.contains(childBoard.toString()) || currNode.path.size() <= depthLimit) {
+          if (!seen.contains(childBoard.toString()) && currNode.path.size() <= depthLimit) {
             seen.add(childBoard.toString());
             ArrayList<SlidingMove> childPath = (ArrayList<SlidingMove>)currNode.path.clone();
+            //System.out.println(childPath);
             childPath.add(move);
             stack.add(new StackNode(childBoard, childPath));
           }
-          // else {
-          //   System.out.println("Already seen!");
-          // }
         }
         if(stack.size() != 0)
         {
           currNode = stack.pop();
         }
         else {
+          //System.out.println("depth limit");
+          currNode = new StackNode(board, new ArrayList<SlidingMove>());
+          seen.clear();
           depthLimit++;
         }
       }
@@ -49,10 +50,6 @@ class IDDFSBot extends SlidingPlayer {
 
     // Perform a single move based on the current given board state
     public SlidingMove makeMove(SlidingBoard board) {
-      if(!board.isSolved())
-      {
-        this.findPath(board);
-      }
       move_number++;
       return path.get(move_number);
     }
