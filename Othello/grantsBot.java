@@ -57,8 +57,7 @@ public class grantsBot extends OthelloPlayer {
     }
 
     public moveandScore findbestMove(int pc, OthelloBoard board, OthelloMove lastMove, moveandScore bestScore, int depth, int depthLimit) {
-      System.out.println(depth);
-      if (depth < depthLimit)
+      if (depth < depthLimit && (depth - 1) < moves_left(board))
       {
         if(pc == 1 && depth != 0) { pc++; }
         else if(depth != 0) { pc --; }
@@ -70,14 +69,30 @@ public class grantsBot extends OthelloPlayer {
             moveandScore ms = new moveandScore(move, 0);
             return ms;
           }
-          board.addPiece(move);
-          moveandScore ms = findbestMove(pc, board, move, bestScore, depth+1, depthLimit);
-          if(ms.score >= bestScore.score)
+          OthelloBoard childboard = new OthelloBoard(board.size, false);
+          setBoard(childboard, board);
+          childboard.addPiece(move);
+          moveandScore ms = findbestMove(pc, childboard, move, bestScore, depth+1, depthLimit);
+          if(playerColor == 1)
           {
-            bestScore.score = ms.score;
-            if(depth == 1)
+            if(ms.score >= bestScore.score)
             {
-              bestScore.move = lastMove;
+              bestScore.score = ms.score;
+              if(depth == 1)
+              {
+                bestScore.move = lastMove;
+              }
+            }
+          }
+          else
+          {
+            if(ms.score <= bestScore.score)
+            {
+              bestScore.score = ms.score;
+              if(depth == 1)
+              {
+                bestScore.move = lastMove;
+              }
             }
           }
         }
@@ -87,7 +102,6 @@ public class grantsBot extends OthelloPlayer {
         moveandScore ms = new moveandScore(lastMove, board.getBoardScore());
         return ms;
       }
-      System.out.println(bestScore.move + " " + bestScore.score);
       if(bestScore.move == null)
       {
         bestScore.move = lastMove;
@@ -96,16 +110,19 @@ public class grantsBot extends OthelloPlayer {
       return bestScore;
     }
 
-    public int getRealBoardScore(OthelloBoard board) {
-      if(playerColor == 1)
-      {
-        return board.getBoardScore();
+    public int moves_left(OthelloBoard board)
+    {
+      int moves_left = 0;
+      for (int r = 0; r < board.size; r++) {
+          for (int c = 0; c < board.size; c++) {
+              if (!(board.board[r][c] == 1) && !(board.board[r][c] == 2)) {
+                  moves_left++;
+              }
+          }
       }
-      else
-      {
-        return -1*board.getBoardScore();
-      }
+      return moves_left;
     }
+
 
     public void setBoard(OthelloBoard board, OthelloBoard otherBoard) {
         for (int r = 0; r < board.size; r++) {
@@ -119,8 +136,8 @@ public class grantsBot extends OthelloPlayer {
       OthelloBoard fuboard = new OthelloBoard(board.size, false);
       setBoard(fuboard, board);
       moveandScore bestScore = new moveandScore(null, 0);
-      bestScore = findbestMove(playerColor, fuboard, null, bestScore, 0, 10);
-      System.out.println("final move: " + bestScore.move);
+      bestScore = findbestMove(playerColor, fuboard, null, bestScore, 0, 6);
+      // System.out.println("final move: " + bestScore.move + " final Score: " + bestScore.score);
       return bestScore.move;
     }
 }
